@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Data Analyst</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --ground: #f3f5f8; --surface: #ffffff; --ink: #1b2a3a; --muted: #5b6b7b; --rule: #d9dfe7;
+  --accent: #1f5fbf; --on-accent: #ffffff; --warn-bg: #fff3d1; --warn: #6b4e00; --err-bg: #fde7e7; --err: #9b2222;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #12171e; --surface: #1a212b; --ink: #e7ecf2; --muted: #9aa8b8; --rule: #2b3542;
+    --accent: #7fa6ee; --on-accent: #0f1620; --warn-bg: #3a3017; --warn: #f1d27d; --err-bg: #3c2020; --err: #ffa3a3;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; color: var(--ink); background: var(--ground); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.muted { color: var(--muted); }
+h1, h2 { font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; font-weight: 600; margin: 0; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.1rem; margin-bottom: .5rem; }
+.page { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; }
+.layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 36px; margin-top: 24px; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; gap: 24px; } }
+.side { border-right: 1px solid var(--rule); padding-right: 28px; min-width: 0; }
+@media (max-width: 860px) { .side { border-right: 0; border-bottom: 1px solid var(--rule); padding: 0 0 24px; } }
+label { display: block; font-weight: 600; margin-bottom: 6px; }
+select, input { width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; }
+select:focus-visible, input:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button { font: inherit; cursor: pointer; }
+.ask { background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 10px 22px; font-weight: 600; white-space: nowrap; }
+.ask:disabled { opacity: .6; cursor: progress; }
+.row { display: flex; gap: 10px; }
+.stats { margin: 10px 0 14px; font-size: .9rem; }
+.scroll { overflow-x: auto; max-width: 100%; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+details { margin-top: 14px; }
+summary { cursor: pointer; color: var(--accent); }
+pre { margin: 8px 0 0; padding: 12px; background: var(--ground); border-radius: 6px; overflow-x: auto; font-size: .82rem; }
+.try { margin: 10px 0 0; font-size: .9rem; color: var(--muted); }
+.try button { background: none; border: 0; padding: 2px 0; margin-right: 14px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.answer { margin-top: 24px; background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 8px; padding: 22px 24px; }
+.answer .label { color: var(--muted); }
+.big { font: 600 clamp(2.4rem, 7vw, 3.6rem)/1.1 Georgia, "Iowan Old Style", "Times New Roman", serif; margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
+.explain { margin: 10px 0 0; max-width: 70ch; }
+.chartbox { position: relative; height: 340px; margin-top: 8px; }
+.toggle { background: none; border: 1px solid var(--rule); color: var(--ink); border-radius: 6px; padding: 4px 12px; font-size: .88rem; margin-top: 10px; }
+.notice { margin-top: 24px; padding: 14px 18px; border-radius: 8px; }
+.notice.warn { background: var(--warn-bg); color: var(--warn); }
+.notice.err { background: var(--err-bg); color: var(--err); }
+.empty { margin-top: 24px; color: var(--muted); max-width: 60ch; }
+.loading { margin-top: 24px; display: flex; align-items: center; gap: 14px; }
+.spin { width: 20px; height: 20px; border: 3px solid var(--rule); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>AI Data Analyst</h1>
+    <p class="muted">Ask a question about a dataset in plain English and get a number, a table or a chart.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="side">
+      <label for="dataset">Dataset</label>
+      <select id="dataset" aria-describedby="preview"></select>
+      <div id="preview" aria-live="polite"></div>
+    </aside>
+
+    <main>
+      <label for="question">Your question</label>
+      <div class="row">
+        <input id="question" type="text" maxlength="500" autocomplete="off" placeholder="Ask a question about this data">
+        <button id="ask" class="ask" type="button">Ask</button>
+      </div>
+      <p id="try" class="try"></p>
+      <div id="result" aria-live="polite">
+        <p class="empty">Pick a dataset and ask a question. The answer appears here, along with how it was calculated.</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// Address of the backend (run: uvicorn app.main:app --reload)
+const API = "http://127.0.0.1:8000";
+const REQUEST_TIMEOUT_MS = 200000;
+const SLOW_AFTER_SECONDS = 15;
+
+const EXAMPLES = {
+  superstore: ["Total sales by region as a bar chart", "Show the monthly sales trend", "Top 5 sub-categories by total sales"],
+  hr_attrition: ["How many employees left the company?", "What is the average salary by department?", "Average age by job role as a bar chart"],
+  students: ["What is the average math score by gender?", "How many students scored above 90 in math?", "Average reading score by test preparation course"],
+};
+
+const $ = (id) => document.getElementById(id);
+let chart = null;
+let timer = null;
+
+// Builds DOM nodes. Text is always inserted as text, never as HTML, so dataset values cannot inject markup.
+function el(tag, attrs = {}, ...kids) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === false || v == null) continue;
+    node.setAttribute(k, v === true ? "" : v);
+  }
+  kids.flat().filter((c) => c != null).forEach((c) => node.append(c));
+  return node;
+}
+
+function fmt(v) {
+  if (v === null || v === undefined) return "–";
+  if (typeof v === "number") return v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  return String(v);
+}
+
+function tableEl(headers, rows) {
+  const head = el("tr", {}, headers.map((h) => el("th", {}, String(h))));
+  const body = rows.map((r) => el("tr", {}, r.map((v) => el("td", { class: typeof v === "number" ? "num" : null }, fmt(v)))));
+  return el("div", { class: "scroll" }, el("table", {}, el("thead", {}, head), el("tbody", {}, body)));
+}
+
+function notice(kind, text) {
+  return el("div", { class: "notice " + kind, role: kind === "err" ? "alert" : null }, text);
+}
+
+function show(node) {
+  if (chart) { chart.destroy(); chart = null; }
+  $("result").replaceChildren(node);
+}
+
+async function api(path, body) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const opts = body
+      ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ctl.signal }
+      : { signal: ctl.signal };
+    const res = await fetch(API + path, opts);
+    if (!res.ok) {
+      let detail = "";
+      try { const j = await res.json(); if (typeof j.detail === "string") detail = j.detail; } catch (_) {}
+      throw new Error(detail || "The request failed (" + res.status + ").");
+    }
+    return await res.json();
+  } catch (e) {
+    if (e.name === "AbortError") throw new Error("The request took too long. Try again.");
+    if (e instanceof TypeError) throw new Error("Can’t reach the backend at " + API + ". Start it with “uvicorn app.main:app --reload” and make sure Ollama is running.");
+    throw e;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+// ---------- datasets and preview ----------
+
+async function loadDatasets() {
+  try {
+    const list = await api("/datasets");
+    if (!list.length) {
+      $("dataset").replaceChildren();
+      $("preview").replaceChildren(el("p", { class: "muted" }, "No datasets found. Put the CSV files in backend/data and restart the backend."));
+      return;
+    }
+    $("dataset").replaceChildren(...list.map((d) => el("option", { value: d.name }, d.label)));
+    onDatasetChange();
+  } catch (e) {
+    show(notice("err", e.message));
+  }
+}
+
+async function onDatasetChange() {
+  const name = $("dataset").value;
+  showExamples(name);
+  const box = $("preview");
+  box.replaceChildren(el("p", { class: "muted" }, "Loading preview…"));
+  try {
+    const s = await api("/datasets/" + encodeURIComponent(name) + "/preview");
+    const cols = tableEl(["Column", "Type", "Missing"], s.columns.map((c) => [c.name, c.type, c.missing]));
+    const sampleHeaders = s.sample.length ? Object.keys(s.sample[0]) : [];
+    box.replaceChildren(
+      el("p", { class: "stats" }, el("span", { class: "muted" }, s.description), " ", el("strong", {}, fmt(s.rows) + " rows, " + s.column_count + " columns")),
+      el("h2", {}, "Columns"),
+      cols,
+      el("details", {}, el("summary", {}, "Show sample rows"), tableEl(sampleHeaders, s.sample.map((r) => sampleHeaders.map((h) => r[h]))))
+    );
+  } catch (e) {
+    box.replaceChildren(el("p", { class: "muted" }, e.message));
+  }
+}
+
+function showExamples(name) {
+  const list = EXAMPLES[name] || [];
+  $("try").replaceChildren(
+    ...(list.length ? [el("span", {}, "Try: ")] : []),
+    ...list.map((q) => el("button", { type: "button", onclick: null }, q))
+  );
+  $("try").querySelectorAll("button").forEach((b) =>
+    b.addEventListener("click", () => { $("question").value = b.textContent; $("question").focus(); })
+  );
+}
+
+// ---------- asking ----------
+
+function setBusy(on) {
+  $("ask").disabled = on;
+  $("ask").textContent = on ? "Working…" : "Ask";
+  clearInterval(timer);
+  if (!on) return;
+  const start = Date.now();
+  const msg = el("span", { class: "muted" });
+  const tick = () => {
+    const s = Math.floor((Date.now() - start) / 1000);
+    msg.textContent = s < SLOW_AFTER_SECONDS
+      ? "Working on it… " + s + "s"
+      : "Getting ready for this dataset. The first question can take up to a minute (" + s + "s).";
+  };
+  tick();
+  timer = setInterval(tick, 1000);
+  show(el("div", { class: "loading", role: "status" }, el("span", { class: "spin" }), msg));
+}
+
+async function ask() {
+  const question = $("question").value.trim();
+  const dataset = $("dataset").value;
+  if (!dataset) return show(notice("err", "Choose a dataset first."));
+  if (!question) return show(notice("warn", "Type a question first."));
+  setBusy(true);
+  try {
+    render(await api("/ask", { dataset, question }));
+  } catch (e) {
+    show(notice("err", e.message));
+  } finally {
+    setBusy(false);
+  }
+}
+
+// ---------- results ----------
+
+function drawChart(canvas, d) {
+  const { type, x, y } = d.chart;
+  const labels = d.rows.map((r) => String(r[0]));
+  const values = d.rows.map((r) => r[1]);
+  const css = getComputedStyle(document.documentElement);
+  const muted = css.getPropertyValue("--muted").trim();
+  const rule = css.getPropertyValue("--rule").trim();
+  const accent = css.getPropertyValue("--accent").trim();
+  const palette = labels.map((_, i) => "hsl(" + ((i * 360) / Math.max(labels.length, 1) + 215) % 360 + ",60%,58%)");
+  const pie = type === "pie";
+  chart = new Chart(canvas, {
+    type,
+    data: { labels, datasets: [{ label: y, data: values, backgroundColor: pie ? palette : accent, borderColor: accent, tension: 0.25, pointRadius: labels.length > 40 ? 0 : 3 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: pie, labels: { color: muted } } },
+      scales: pie ? {} : {
+        x: { title: { display: true, text: x, color: muted }, ticks: { color: muted, maxTicksLimit: 12 }, grid: { color: rule } },
+        y: { title: { display: true, text: y, color: muted }, ticks: { color: muted }, grid: { color: rule } },
+      },
+    },
+  });
+}
+
+function render(d) {
+  if (d.status === "clarification") return show(notice("warn", d.message));
+  if (d.status !== "success") return show(notice("err", d.error || "Something went wrong. Try again."));
+
+  const card = el("section", { class: "answer" });
+  if (d.result_type === "number") {
+    card.append(el("div", { class: "label" }, d.label), el("div", { class: "big" }, fmt(d.value)));
+  } else {
+    const table = tableEl(d.columns, d.rows);
+    if (d.result_type === "chart" && window.Chart) {
+      const canvas = el("canvas", { role: "img", "aria-label": d.explanation });
+      const chartBox = el("div", { class: "chartbox" }, canvas);
+      const toggle = el("button", { type: "button", class: "toggle" }, "Show as table");
+      table.hidden = true;
+      toggle.addEventListener("click", () => {
+        const showTable = table.hidden;
+        table.hidden = !showTable;
+        chartBox.hidden = showTable;
+        toggle.textContent = showTable ? "Show as chart" : "Show as table";
+      });
+      card.append(chartBox, table, toggle);
+      requestAnimationFrame(() => drawChart(canvas, d));
+    } else {
+      card.append(table);
+    }
+  }
+  card.append(el("p", { class: "explain" }, d.explanation));
+  if (d.truncated) card.append(el("p", { class: "muted" }, "Showing the first " + d.rows.length + " of " + fmt(d.row_count) + " rows."));
+  card.append(el("details", {}, el("summary", {}, "How was this calculated?"), el("pre", {}, JSON.stringify(d.plan, null, 2))));
+  show(card);
+}
+
+$("ask").addEventListener("click", ask);
+$("question").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+$("dataset").addEventListener("change", onDatasetChange);
+loadDatasets();
+</script>
+</body>
+</html>
