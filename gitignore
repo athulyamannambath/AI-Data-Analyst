@@ -1,0 +1,29 @@
+# ----- Secrets / local settings -----
+.env
+!.env.example
+
+# ----- Python -----
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ----- Datasets (large; download from Kaggle, see README) -----
+data/*.csv
+
+# ----- Evaluation output files (created by: python evaluate.py --save ...) -----
+results*.json
+after_rewrite.json
+seven.json
+
+# ----- Frontend (Member 2) -----
+node_modules/
+dist/
+build/
+
+# ----- Editors / OS -----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

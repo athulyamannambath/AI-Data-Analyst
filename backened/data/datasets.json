@@ -1,0 +1,98 @@
+{
+  "superstore": {
+    "label": "Superstore Sales",
+    "file": "Sample - Superstore.csv",
+    "description": "Retail orders from a US superstore with sales, profit, discount and customer details.",
+    "read_options": {
+      "encoding": "cp1252"
+    },
+    "date_columns": {
+      "Order Date": "%m/%d/%Y",
+      "Ship Date": "%m/%d/%Y"
+    },
+    "column_notes": {
+      "Sales": "Revenue of the order line in USD",
+      "Profit": "Profit of the order line in USD (can be negative)",
+      "Discount": "Discount fraction between 0 and 1",
+      "Order Date": "Date the order was placed; use for trends over time"
+    },
+    "aliases": {
+      "revenue": "Sales",
+      "turnover": "Sales",
+      "customer": "Customer Name",
+      "product": "Product Name"
+    }
+  },
+  "students": {
+    "label": "Students Performance",
+    "file": "StudentsPerformance.csv",
+    "description": "Exam scores of 1000 students with demographic and background information.",
+    "read_options": {},
+    "date_columns": {},
+    "column_notes": {
+      "math score": "Math exam score, 0-100",
+      "reading score": "Reading exam score, 0-100",
+      "writing score": "Writing exam score, 0-100",
+      "test preparation course": "'completed' or 'none'"
+    },
+    "aliases": {
+      "math": "math score",
+      "maths": "math score",
+      "reading": "reading score",
+      "writing": "writing score",
+      "race": "race/ethnicity",
+      "ethnicity": "race/ethnicity",
+      "parent education": "parental level of education",
+      "parental education": "parental level of education",
+      "test prep": "test preparation course",
+      "sex": "gender"
+    }
+  },
+  "hr_attrition": {
+    "label": "IBM HR Attrition",
+    "file": "WA_Fn-UseC_-HR-Employee-Attrition.csv",
+    "description": "Fictional IBM employee data used to study attrition.",
+    "read_options": {},
+    "date_columns": {},
+    "drop_columns": [
+      "EmployeeCount",
+      "StandardHours",
+      "Over18"
+    ],
+    "column_notes": {
+      "MonthlyIncome": "Monthly salary in USD (this is the 'salary' column)",
+      "Attrition": "'Yes' if the employee left, otherwise 'No'",
+      "Department": "Sales, Research & Development or Human Resources",
+      "YearsAtCompany": "Tenure in years",
+      "OverTime": "'Yes' or 'No'"
+    },
+    "aliases": {
+      "salary": "MonthlyIncome",
+      "pay": "MonthlyIncome",
+      "wage": "MonthlyIncome",
+      "income": "MonthlyIncome",
+      "monthly salary": "MonthlyIncome",
+      "tenure": "YearsAtCompany",
+      "title": "JobRole",
+      "position": "JobRole",
+      "role": "JobRole",
+      "sex": "Gender"
+    }
+  },
+  "netflix": {
+    "label": "Netflix Titles",
+    "file": "netflix_titles.csv",
+    "description": "Movies and TV shows available on Netflix with cast, country, rating and release info.",
+    "read_options": {},
+    "date_columns": {
+      "date_added": "%B %d, %Y"
+    },
+    "column_notes": {
+      "type": "'Movie' or 'TV Show'",
+      "duration": "Text such as '90 min' (movies) or '2 Seasons' (TV shows)",
+      "listed_in": "Comma-separated genres",
+      "country": "Comma-separated list of countries",
+      "date_added": "Date the title was added to Netflix"
+    }
+  }
+}

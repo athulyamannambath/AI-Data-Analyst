@@ -1,0 +1,289 @@
+[
+  {
+    "id": "sup-01",
+    "dataset": "superstore",
+    "question": "What is the total sales?",
+    "kind": "scalar",
+    "expected": "df['Sales'].sum()"
+  },
+  {
+    "id": "sup-02",
+    "dataset": "superstore",
+    "question": "What is the average profit?",
+    "kind": "scalar",
+    "expected": "df['Profit'].mean()"
+  },
+  {
+    "id": "sup-03",
+    "dataset": "superstore",
+    "question": "How many rows are in the dataset?",
+    "kind": "scalar",
+    "expected": "len(df)"
+  },
+  {
+    "id": "sup-04",
+    "dataset": "superstore",
+    "question": "Total sales by region",
+    "kind": "table",
+    "expected": "df.groupby('Region')['Sales'].sum()"
+  },
+  {
+    "id": "sup-05",
+    "dataset": "superstore",
+    "question": "Total profit by category as a bar chart",
+    "kind": "table",
+    "expected": "df.groupby('Category')['Profit'].sum()",
+    "chart": true
+  },
+  {
+    "id": "sup-06",
+    "dataset": "superstore",
+    "question": "Top 5 sub-categories by total sales",
+    "kind": "table",
+    "expected": "df.groupby('Sub-Category')['Sales'].sum().nlargest(5)"
+  },
+  {
+    "id": "sup-07",
+    "dataset": "superstore",
+    "question": "How many orders were shipped using Same Day shipping?",
+    "kind": "scalar",
+    "expected": "(df['Ship Mode'] == 'Same Day').sum()"
+  },
+  {
+    "id": "sup-08",
+    "dataset": "superstore",
+    "question": "What is the average discount for the Consumer segment?",
+    "kind": "scalar",
+    "expected": "df.loc[df['Segment'] == 'Consumer', 'Discount'].mean()"
+  },
+  {
+    "id": "sup-09",
+    "dataset": "superstore",
+    "question": "Show the monthly sales trend",
+    "kind": "table",
+    "expected": "df.groupby(df['Order Date'].dt.to_period('M').astype(str))['Sales'].sum()",
+    "chart": true
+  },
+  {
+    "id": "sup-10",
+    "dataset": "superstore",
+    "question": "What is the total sales in 2016?",
+    "kind": "scalar",
+    "expected": "df.loc[df['Order Date'].dt.year == 2016, 'Sales'].sum()"
+  },
+  {
+    "id": "sup-11",
+    "dataset": "superstore",
+    "question": "Average profit by segment",
+    "kind": "table",
+    "expected": "df.groupby('Segment')['Profit'].mean()"
+  },
+  {
+    "id": "sup-12",
+    "dataset": "superstore",
+    "question": "How many orders are there in each region?",
+    "kind": "table",
+    "expected": "df.groupby('Region').size()"
+  },
+  {
+    "id": "sup-13",
+    "dataset": "superstore",
+    "question": "Show the top 3 states by total sales",
+    "kind": "table",
+    "expected": "df.groupby('State')['Sales'].sum().nlargest(3)"
+  },
+  {
+    "id": "sup-14",
+    "dataset": "superstore",
+    "question": "What will sales be next year?",
+    "kind": "clarification"
+  },
+  {
+    "id": "sup-15",
+    "dataset": "superstore",
+    "question": "What is the average salary?",
+    "kind": "clarification"
+  },
+  {
+    "id": "hr-01",
+    "dataset": "hr_attrition",
+    "question": "How many employees left the company?",
+    "kind": "scalar",
+    "expected": "(df['Attrition'] == 'Yes').sum()"
+  },
+  {
+    "id": "hr-02",
+    "dataset": "hr_attrition",
+    "question": "How many employees work overtime?",
+    "kind": "scalar",
+    "expected": "(df['OverTime'] == 'Yes').sum()"
+  },
+  {
+    "id": "hr-03",
+    "dataset": "hr_attrition",
+    "question": "How many employees earn more than 10000 per month?",
+    "kind": "scalar",
+    "expected": "(df['MonthlyIncome'] > 10000).sum()"
+  },
+  {
+    "id": "hr-04",
+    "dataset": "hr_attrition",
+    "question": "What is the average salary by department?",
+    "kind": "table",
+    "expected": "df.groupby('Department')['MonthlyIncome'].mean()"
+  },
+  {
+    "id": "hr-05",
+    "dataset": "hr_attrition",
+    "question": "Average age by job role as a bar chart",
+    "kind": "table",
+    "expected": "df.groupby('JobRole')['Age'].mean()",
+    "chart": true
+  },
+  {
+    "id": "hr-06",
+    "dataset": "hr_attrition",
+    "question": "What is the average monthly income?",
+    "kind": "scalar",
+    "expected": "df['MonthlyIncome'].mean()"
+  },
+  {
+    "id": "hr-07",
+    "dataset": "hr_attrition",
+    "question": "How many employees are in each department?",
+    "kind": "table",
+    "expected": "df.groupby('Department').size()"
+  },
+  {
+    "id": "hr-08",
+    "dataset": "hr_attrition",
+    "question": "What is the average monthly income of employees who left the company?",
+    "kind": "scalar",
+    "expected": "df.loc[df['Attrition'] == 'Yes', 'MonthlyIncome'].mean()"
+  },
+  {
+    "id": "hr-09",
+    "dataset": "hr_attrition",
+    "question": "How many female employees are there?",
+    "kind": "scalar",
+    "expected": "(df['Gender'] == 'Female').sum()"
+  },
+  {
+    "id": "hr-10",
+    "dataset": "hr_attrition",
+    "question": "Average years at company by job role",
+    "kind": "table",
+    "expected": "df.groupby('JobRole')['YearsAtCompany'].mean()"
+  },
+  {
+    "id": "hr-11",
+    "dataset": "hr_attrition",
+    "question": "How many employees travel frequently?",
+    "kind": "scalar",
+    "expected": "(df['BusinessTravel'] == 'Travel_Frequently').sum()"
+  },
+  {
+    "id": "hr-12",
+    "dataset": "hr_attrition",
+    "question": "What is the maximum monthly income?",
+    "kind": "scalar",
+    "expected": "df['MonthlyIncome'].max()"
+  },
+  {
+    "id": "hr-13",
+    "dataset": "hr_attrition",
+    "question": "How many employees left the company in each department?",
+    "kind": "table",
+    "expected": "df[df['Attrition'] == 'Yes'].groupby('Department').size()"
+  },
+  {
+    "id": "hr-14",
+    "dataset": "hr_attrition",
+    "question": "Which employee will leave next?",
+    "kind": "clarification"
+  },
+  {
+    "id": "stu-01",
+    "dataset": "students",
+    "question": "What is the average math score?",
+    "kind": "scalar",
+    "expected": "df['math score'].mean()"
+  },
+  {
+    "id": "stu-02",
+    "dataset": "students",
+    "question": "What is the average math score for students who completed the test preparation course?",
+    "kind": "scalar",
+    "expected": "df.loc[df['test preparation course'] == 'completed', 'math score'].mean()"
+  },
+  {
+    "id": "stu-03",
+    "dataset": "students",
+    "question": "How many students are there in each parental level of education?",
+    "kind": "table",
+    "expected": "df.groupby('parental level of education').size()"
+  },
+  {
+    "id": "stu-04",
+    "dataset": "students",
+    "question": "What is the average reading score by gender?",
+    "kind": "table",
+    "expected": "df.groupby('gender')['reading score'].mean()"
+  },
+  {
+    "id": "stu-05",
+    "dataset": "students",
+    "question": "How many students scored above 90 in math?",
+    "kind": "scalar",
+    "expected": "(df['math score'] > 90).sum()"
+  },
+  {
+    "id": "stu-06",
+    "dataset": "students",
+    "question": "What is the highest writing score?",
+    "kind": "scalar",
+    "expected": "df['writing score'].max()"
+  },
+  {
+    "id": "stu-07",
+    "dataset": "students",
+    "question": "Average writing score by test preparation course",
+    "kind": "table",
+    "expected": "df.groupby('test preparation course')['writing score'].mean()"
+  },
+  {
+    "id": "stu-08",
+    "dataset": "students",
+    "question": "How many students receive free or reduced lunch?",
+    "kind": "scalar",
+    "expected": "(df['lunch'] == 'free/reduced').sum()"
+  },
+  {
+    "id": "stu-09",
+    "dataset": "students",
+    "question": "Average math score by race/ethnicity as a bar chart",
+    "kind": "table",
+    "expected": "df.groupby('race/ethnicity')['math score'].mean()",
+    "chart": true
+  },
+  {
+    "id": "stu-10",
+    "dataset": "students",
+    "question": "How many female students scored above 80 in reading?",
+    "kind": "scalar",
+    "expected": "((df['gender'] == 'female') & (df['reading score'] > 80)).sum()"
+  },
+  {
+    "id": "stu-11",
+    "dataset": "students",
+    "question": "How many students are there?",
+    "kind": "scalar",
+    "expected": "len(df)"
+  },
+  {
+    "id": "stu-12",
+    "dataset": "students",
+    "question": "What is the average salary?",
+    "kind": "clarification"
+  }
+]

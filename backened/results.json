@@ -1,0 +1,691 @@
+[
+  {
+    "id": "sup-01",
+    "dataset": "superstore",
+    "question": "What is the total sales?",
+    "passed": true,
+    "reason": "",
+    "seconds": 4.9,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [],
+      "column": "Sales",
+      "aggregation": "sum"
+    }
+  },
+  {
+    "id": "sup-02",
+    "dataset": "superstore",
+    "question": "What is the average profit?",
+    "passed": true,
+    "reason": "",
+    "seconds": 4.9,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [],
+      "column": "Profit",
+      "aggregation": "mean"
+    }
+  },
+  {
+    "id": "sup-03",
+    "dataset": "superstore",
+    "question": "How many rows are in the dataset?",
+    "passed": true,
+    "reason": "",
+    "seconds": 4.0,
+    "plan": {
+      "operation": "count_rows",
+      "filters": []
+    }
+  },
+  {
+    "id": "sup-04",
+    "dataset": "superstore",
+    "question": "Total sales by region",
+    "passed": true,
+    "reason": "",
+    "seconds": 7.0,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "Region"
+      ],
+      "aggregation": "sum",
+      "column": "Sales",
+      "sort": "desc",
+      "output": "table"
+    }
+  },
+  {
+    "id": "sup-05",
+    "dataset": "superstore",
+    "question": "Total profit by category as a bar chart",
+    "passed": true,
+    "reason": "",
+    "seconds": 7.7,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "Category"
+      ],
+      "aggregation": "sum",
+      "column": "Profit",
+      "sort": "desc",
+      "output": "chart",
+      "chart_type": "bar"
+    }
+  },
+  {
+    "id": "sup-06",
+    "dataset": "superstore",
+    "question": "Top 5 sub-categories by total sales",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.5,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "Sub-Category"
+      ],
+      "column": "Sales",
+      "aggregation": "sum",
+      "sort": "desc",
+      "limit": 5
+    }
+  },
+  {
+    "id": "sup-07",
+    "dataset": "superstore",
+    "question": "How many orders were shipped using Same Day shipping?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.2,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "Ship Mode",
+          "op": "==",
+          "value": "Same Day"
+        }
+      ]
+    }
+  },
+  {
+    "id": "sup-08",
+    "dataset": "superstore",
+    "question": "What is the average discount for the Consumer segment?",
+    "passed": true,
+    "reason": "",
+    "seconds": 8.2,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [
+        {
+          "column": "Segment",
+          "op": "==",
+          "value": "Consumer"
+        }
+      ],
+      "column": "Discount",
+      "aggregation": "mean"
+    }
+  },
+  {
+    "id": "sup-09",
+    "dataset": "superstore",
+    "question": "Show the monthly sales trend",
+    "passed": true,
+    "reason": "",
+    "seconds": 8.6,
+    "plan": {
+      "operation": "time_trend",
+      "filters": [],
+      "date_column": "Order Date",
+      "freq": "month",
+      "aggregation": "sum",
+      "column": "Sales",
+      "output": "chart",
+      "chart_type": "line"
+    }
+  },
+  {
+    "id": "sup-10",
+    "dataset": "superstore",
+    "question": "What is the total sales in 2016?",
+    "passed": true,
+    "reason": "",
+    "seconds": 13.5,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [
+        {
+          "column": "Order Date",
+          "op": ">=",
+          "value": "2016-01-01"
+        },
+        {
+          "column": "Order Date",
+          "op": "<=",
+          "value": "2016-12-31"
+        }
+      ],
+      "column": "Sales",
+      "aggregation": "sum"
+    }
+  },
+  {
+    "id": "sup-11",
+    "dataset": "superstore",
+    "question": "Average profit by segment",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.3,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "Segment"
+      ],
+      "aggregation": "mean",
+      "column": "Profit"
+    }
+  },
+  {
+    "id": "sup-12",
+    "dataset": "superstore",
+    "question": "How many orders are there in each region?",
+    "passed": true,
+    "reason": "",
+    "seconds": 5.8,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "Region"
+      ],
+      "aggregation": "count",
+      "column": null
+    }
+  },
+  {
+    "id": "sup-13",
+    "dataset": "superstore",
+    "question": "Show the top 3 states by total sales",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.6,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "State"
+      ],
+      "column": "Sales",
+      "aggregation": "sum",
+      "sort": "desc",
+      "limit": 3
+    }
+  },
+  {
+    "id": "sup-14",
+    "dataset": "superstore",
+    "question": "What will sales be next year?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.2,
+    "plan": null
+  },
+  {
+    "id": "sup-15",
+    "dataset": "superstore",
+    "question": "What is the average salary?",
+    "passed": true,
+    "reason": "",
+    "seconds": 5.1,
+    "plan": null
+  },
+  {
+    "id": "hr-01",
+    "dataset": "hr_attrition",
+    "question": "How many employees left the company?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.9,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "Attrition",
+          "op": "==",
+          "value": "Yes"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hr-02",
+    "dataset": "hr_attrition",
+    "question": "How many employees work overtime?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.5,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "OverTime",
+          "op": "==",
+          "value": "Yes"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hr-03",
+    "dataset": "hr_attrition",
+    "question": "How many employees earn more than 10000 per month?",
+    "passed": true,
+    "reason": "",
+    "seconds": 7.5,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "MonthlyIncome",
+          "op": ">",
+          "value": 10000.0
+        }
+      ]
+    }
+  },
+  {
+    "id": "hr-04",
+    "dataset": "hr_attrition",
+    "question": "What is the average salary by department?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.6,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "Department"
+      ],
+      "aggregation": "mean",
+      "column": "MonthlyIncome"
+    }
+  },
+  {
+    "id": "hr-05",
+    "dataset": "hr_attrition",
+    "question": "Average age by job role as a bar chart",
+    "passed": true,
+    "reason": "",
+    "seconds": 8.9,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "JobRole"
+      ],
+      "aggregation": "mean",
+      "column": "Age",
+      "sort": "desc",
+      "output": "chart",
+      "chart_type": "bar"
+    }
+  },
+  {
+    "id": "hr-06",
+    "dataset": "hr_attrition",
+    "question": "What is the average monthly income?",
+    "passed": true,
+    "reason": "",
+    "seconds": 5.2,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [],
+      "column": "MonthlyIncome",
+      "aggregation": "mean"
+    }
+  },
+  {
+    "id": "hr-07",
+    "dataset": "hr_attrition",
+    "question": "How many employees are in each department?",
+    "passed": true,
+    "reason": "",
+    "seconds": 5.8,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "Department"
+      ],
+      "aggregation": "count",
+      "column": null
+    }
+  },
+  {
+    "id": "hr-08",
+    "dataset": "hr_attrition",
+    "question": "What is the average monthly income of employees who left the company?",
+    "passed": true,
+    "reason": "",
+    "seconds": 8.6,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [
+        {
+          "column": "Attrition",
+          "op": "==",
+          "value": "Yes"
+        }
+      ],
+      "column": "MonthlyIncome",
+      "aggregation": "mean"
+    }
+  },
+  {
+    "id": "hr-09",
+    "dataset": "hr_attrition",
+    "question": "How many female employees are there?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.4,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "Gender",
+          "op": "==",
+          "value": "Female"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hr-10",
+    "dataset": "hr_attrition",
+    "question": "Average years at company by job role",
+    "passed": true,
+    "reason": "",
+    "seconds": 10.3,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "JobRole"
+      ],
+      "aggregation": "mean",
+      "column": "YearsAtCompany",
+      "sort": "asc"
+    }
+  },
+  {
+    "id": "hr-11",
+    "dataset": "hr_attrition",
+    "question": "How many employees travel frequently?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.7,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "BusinessTravel",
+          "op": "==",
+          "value": "Travel_Frequently"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hr-12",
+    "dataset": "hr_attrition",
+    "question": "What is the maximum monthly income?",
+    "passed": true,
+    "reason": "",
+    "seconds": 5.2,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [],
+      "column": "MonthlyIncome",
+      "aggregation": "max"
+    }
+  },
+  {
+    "id": "hr-13",
+    "dataset": "hr_attrition",
+    "question": "How many employees left the company in each department?",
+    "passed": true,
+    "reason": "",
+    "seconds": 8.5,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [
+        {
+          "column": "Attrition",
+          "op": "==",
+          "value": "Yes"
+        }
+      ],
+      "group_by": [
+        "Department"
+      ],
+      "aggregation": "count",
+      "column": null
+    }
+  },
+  {
+    "id": "hr-14",
+    "dataset": "hr_attrition",
+    "question": "Which employee will leave next?",
+    "passed": true,
+    "reason": "",
+    "seconds": 8.6,
+    "plan": null
+  },
+  {
+    "id": "stu-01",
+    "dataset": "students",
+    "question": "What is the average math score?",
+    "passed": true,
+    "reason": "",
+    "seconds": 83.7,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [],
+      "column": "math score",
+      "aggregation": "mean"
+    }
+  },
+  {
+    "id": "stu-02",
+    "dataset": "students",
+    "question": "What is the average math score for students who completed the test preparation course?",
+    "passed": false,
+    "reason": "expected a single number, got a table",
+    "seconds": 8.2,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "test preparation course"
+      ],
+      "aggregation": "mean",
+      "column": "math score"
+    }
+  },
+  {
+    "id": "stu-03",
+    "dataset": "students",
+    "question": "How many students are there in each parental level of education?",
+    "passed": true,
+    "reason": "",
+    "seconds": 6.8,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "parental level of education"
+      ],
+      "aggregation": "count",
+      "column": null
+    }
+  },
+  {
+    "id": "stu-04",
+    "dataset": "students",
+    "question": "What is the average reading score by gender?",
+    "passed": true,
+    "reason": "",
+    "seconds": 7.9,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "gender"
+      ],
+      "aggregation": "mean",
+      "column": "reading score"
+    }
+  },
+  {
+    "id": "stu-05",
+    "dataset": "students",
+    "question": "How many students scored above 90 in math?",
+    "passed": true,
+    "reason": "",
+    "seconds": 7.3,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "math score",
+          "op": ">",
+          "value": 90.0
+        }
+      ]
+    }
+  },
+  {
+    "id": "stu-06",
+    "dataset": "students",
+    "question": "What is the highest writing score?",
+    "passed": true,
+    "reason": "",
+    "seconds": 5.6,
+    "plan": {
+      "operation": "aggregate",
+      "filters": [],
+      "column": "writing score",
+      "aggregation": "max"
+    }
+  },
+  {
+    "id": "stu-07",
+    "dataset": "students",
+    "question": "Average writing score by test preparation course",
+    "passed": true,
+    "reason": "",
+    "seconds": 7.8,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "test preparation course"
+      ],
+      "aggregation": "mean",
+      "column": "writing score"
+    }
+  },
+  {
+    "id": "stu-08",
+    "dataset": "students",
+    "question": "How many students receive free or reduced lunch?",
+    "passed": true,
+    "reason": "",
+    "seconds": 7.0,
+    "plan": {
+      "operation": "count_rows",
+      "filters": [
+        {
+          "column": "lunch",
+          "op": "==",
+          "value": "free/reduced"
+        }
+      ]
+    }
+  },
+  {
+    "id": "stu-09",
+    "dataset": "students",
+    "question": "Average math score by race/ethnicity as a bar chart",
+    "passed": true,
+    "reason": "",
+    "seconds": 9.5,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [],
+      "group_by": [
+        "race/ethnicity"
+      ],
+      "aggregation": "mean",
+      "column": "math score",
+      "sort": "desc",
+      "output": "chart",
+      "chart_type": "bar"
+    }
+  },
+  {
+    "id": "stu-10",
+    "dataset": "students",
+    "question": "How many female students scored above 80 in reading?",
+    "passed": false,
+    "reason": "expected a single number, got a table",
+    "seconds": 10.0,
+    "plan": {
+      "operation": "groupby_aggregate",
+      "filters": [
+        {
+          "column": "gender",
+          "op": "==",
+          "value": "female"
+        }
+      ],
+      "group_by": [
+        "gender"
+      ],
+      "aggregation": "count",
+      "column": "reading score",
+      "output": "table"
+    }
+  },
+  {
+    "id": "stu-11",
+    "dataset": "students",
+    "question": "How many students are there?",
+    "passed": true,
+    "reason": "",
+    "seconds": 3.7,
+    "plan": {
+      "operation": "count_rows",
+      "filters": []
+    }
+  },
+  {
+    "id": "stu-12",
+    "dataset": "students",
+    "question": "What is the average salary?",
+    "passed": true,
+    "reason": "",
+    "seconds": 4.8,
+    "plan": null
+  }
+]
