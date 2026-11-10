@@ -370,6 +370,51 @@ summary {
   }
 }
 
+/* Dataset insights */
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.insight-card {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 12px 8px;
+  min-width: 0;
+}
+
+.insight-card strong {
+  display: block;
+  font-size: 1.25rem;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+.insight-card span {
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.dataset-search {
+  width: 100%;
+  padding: 9px;
+  margin: 8px 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+@media (max-width: 500px) {
+  .insight-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -439,6 +484,15 @@ function tableEl(headers, rows) {
   return el("div", { class: "scroll" }, el("table", {}, el("thead", {}, head), el("tbody", {}, body)));
 }
 
+function createInsight(label, value) {
+  return el(
+    "div",
+    { class: "insight-card" },
+    el("span", {}, label),
+    el("strong", {}, fmt(value))
+  );
+}
+
 function notice(kind, text) {
   return el("div", { class: "notice " + kind, role: kind === "err" ? "alert" : null }, text);
 }
@@ -488,25 +542,105 @@ async function loadDatasets() {
   }
 }
 
+
 async function onDatasetChange() {
   const name = $("dataset").value;
   showExamples(name);
+
   const box = $("preview");
   box.replaceChildren(el("p", { class: "muted" }, "Loading preview…"));
+
   try {
-    const s = await api("/datasets/" + encodeURIComponent(name) + "/preview");
-    const cols = tableEl(["Column", "Type", "Missing"], s.columns.map((c) => [c.name, c.type, c.missing]));
-    const sampleHeaders = s.sample.length ? Object.keys(s.sample[0]) : [];
-    box.replaceChildren(
-      el("p", { class: "stats" }, el("span", { class: "muted" }, s.description), " ", el("strong", {}, fmt(s.rows) + " rows, " + s.column_count + " columns")),
-      el("h2", {}, "Columns"),
-      cols,
-      el("details", {}, el("summary", {}, "Show sample rows"), tableEl(sampleHeaders, s.sample.map((r) => sampleHeaders.map((h) => r[h]))))
+    const s = await api(
+      "/datasets/" + encodeURIComponent(name) + "/preview"
     );
+
+    const totalMissing = s.columns.reduce(
+      (total, column) => total + (Number(column.missing) || 0),
+      0
+    );
+
+    const totalCells = s.rows * s.column_count;
+
+    const missingPercentage = totalCells > 0
+      ? ((totalMissing / totalCells) * 100).toFixed(2) + "%"
+      : "0%";
+
+    const insights = el(
+      "div",
+      { class: "insight-grid" },
+      createInsight("Total rows", s.rows),
+      createInsight("Total columns", s.column_count),
+      createInsight("Missing values", totalMissing)
+    );
+
+    const search = el("input", {
+      class: "dataset-search",
+      type: "search",
+      placeholder: "Search columns...",
+      "aria-label": "Search dataset columns"
+    });
+
+    const columnContainer = el("div", {});
+
+    function displayColumns(query = "") {
+      const filtered = s.columns.filter((column) =>
+        column.name.toLowerCase().includes(query.toLowerCase())
+      );
+
+      columnContainer.replaceChildren(
+        filtered.length
+          ? tableEl(
+              ["Column", "Type", "Missing"],
+              filtered.map((c) => [c.name, c.type, c.missing])
+            )
+          : el("p", { class: "muted" }, "No matching columns found.")
+      );
+    }
+
+    search.addEventListener("input", () => {
+      displayColumns(search.value);
+    });
+
+    displayColumns();
+
+    const sampleHeaders = s.sample.length
+      ? Object.keys(s.sample[0])
+      : [];
+
+    box.replaceChildren(
+      el("p", { class: "stats" },
+        el("span", { class: "muted" }, s.description),
+        " ",
+        el("strong", {},
+          fmt(s.rows) + " rows, " + s.column_count + " columns"
+        )
+      ),
+      insights,
+      el("p", { class: "muted" },
+        "Missing data: " + missingPercentage
+      ),
+      el("h2", {}, "Columns"),
+      search,
+      columnContainer,
+      el(
+        "details",
+        {},
+        el("summary", {}, "Show sample rows"),
+        tableEl(
+          sampleHeaders,
+          s.sample.map((r) => sampleHeaders.map((h) => r[h]))
+        )
+      )
+    );
+
   } catch (e) {
-    box.replaceChildren(el("p", { class: "muted" }, e.message));
+    box.replaceChildren(
+      el("p", { class: "muted" }, e.message)
+    );
   }
 }
+
 
 function showExamples(name) {
   const list = EXAMPLES[name] || [];
