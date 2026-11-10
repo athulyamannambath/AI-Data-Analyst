@@ -807,11 +807,46 @@ function drawChart(canvas, d) {
   const pie = type === "pie";
   chart = new Chart(canvas, {
     type,
-    data: { labels, datasets: [{ label: y, data: values, backgroundColor: pie ? palette : accent, borderColor: accent, tension: 0.25, pointRadius: labels.length > 40 ? 0 : 3 }] },
+    data: {
+  labels,
+  datasets: [{
+    label: y,
+    data: values,
+    backgroundColor: pie ? palette : accent,
+    borderColor: pie ? css.getPropertyValue("--surface").trim() : accent,
+    borderWidth: 2,
+    borderRadius: type === "bar" ? 6 : 0,
+    tension: 0.35,
+    pointRadius: labels.length > 40 ? 0 : 3,
+    pointHoverRadius: 6,
+    fill: type === "line"
+  }]
+},
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: pie, labels: { color: muted } } },
+plugins: {
+  legend: {
+    display: true,
+    position: "bottom",
+    labels: {
+      color: muted,
+      padding: 16,
+      usePointStyle: true
+    }
+  },
+  tooltip: {
+    enabled: true,
+    backgroundColor: css.getPropertyValue("--surface").trim(),
+    titleColor: css.getPropertyValue("--ink").trim(),
+    bodyColor: css.getPropertyValue("--ink").trim(),
+    borderColor: rule,
+    borderWidth: 1,
+    padding: 12,
+    displayColors: true
+  }
+},
+
       scales: pie ? {} : {
         x: { title: { display: true, text: x, color: muted }, ticks: { color: muted, maxTicksLimit: 12 }, grid: { color: rule } },
         y: { title: { display: true, text: y, color: muted }, ticks: { color: muted }, grid: { color: rule } },
