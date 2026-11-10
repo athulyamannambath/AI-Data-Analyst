@@ -68,6 +68,61 @@ pre { margin: 8px 0 0; padding: 12px; background: var(--ground); border-radius: 
 .try { margin: 10px 0 0; font-size: .9rem; color: var(--muted); }
 .try button { background: none; border: 0; padding: 2px 0; margin-right: 14px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 .answer { margin-top: 24px; background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 8px; padding: 22px 24px; }
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.result-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.result-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  background: var(--ground);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.answer details {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--ground);
+}
+
+.answer details summary {
+  color: var(--ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.answer details pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 12px;
+}
+
 .answer .label { color: var(--muted); }
 .big { font: 600 clamp(2.4rem, 7vw, 3.6rem)/1.1 Georgia, "Iowan Old Style", "Times New Roman", serif; margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
 .explain { margin: 10px 0 0; max-width: 70ch; }
@@ -765,37 +820,88 @@ function drawChart(canvas, d) {
   });
 }
 
+
 function render(d) {
-  if (d.status === "clarification") return show(notice("warn", d.message));
-  if (d.status !== "success") return show(notice("err", d.error || "Something went wrong. Try again."));
+  if (d.status === "clarification") {
+    return show(notice("warn", d.message));
+  }
+
+  if (d.status !== "success") {
+    return show(notice("err", d.error || "Something went wrong. Try again."));
+  }
 
   const card = el("section", { class: "answer" });
+
+  const resultType =
+    d.result_type === "number" ? "Metric" :
+    d.result_type === "chart" ? "Chart" : "Table";
+
+  const header = el("div", { class: "result-header" },
+    el("h2", { class: "result-title" }, "Query Results"),
+    el("span", { class: "result-type" }, resultType)
+  );
+
+  card.append(header);
+
   if (d.result_type === "number") {
-    card.append(el("div", { class: "label" }, d.label), el("div", { class: "big" }, fmt(d.value)));
+    card.append(
+      el("div", { class: "label" }, d.label),
+      el("div", { class: "big" }, fmt(d.value))
+    );
   } else {
     const table = tableEl(d.columns, d.rows);
+
     if (d.result_type === "chart" && window.Chart) {
-      const canvas = el("canvas", { role: "img", "aria-label": d.explanation });
+      const canvas = el("canvas", {
+        role: "img",
+        "aria-label": d.explanation
+      });
+
       const chartBox = el("div", { class: "chartbox" }, canvas);
-      const toggle = el("button", { type: "button", class: "toggle" }, "Show as table");
+      const toggle = el("button", {
+        type: "button",
+        class: "toggle"
+      }, "Show as table");
+
       table.hidden = true;
+
       toggle.addEventListener("click", () => {
         const showTable = table.hidden;
         table.hidden = !showTable;
         chartBox.hidden = showTable;
         toggle.textContent = showTable ? "Show as chart" : "Show as table";
       });
+
       card.append(chartBox, table, toggle);
       requestAnimationFrame(() => drawChart(canvas, d));
     } else {
       card.append(table);
     }
   }
-  card.append(el("p", { class: "explain" }, d.explanation));
-  if (d.truncated) card.append(el("p", { class: "muted" }, "Showing the first " + d.rows.length + " of " + fmt(d.row_count) + " rows."));
-  card.append(el("details", {}, el("summary", {}, "How was this calculated?"), el("pre", {}, JSON.stringify(d.plan, null, 2))));
+
+  card.append(
+    el("p", { class: "explain" }, d.explanation)
+  );
+
+  if (d.truncated) {
+    card.append(
+      el("p", { class: "muted" },
+        "Showing the first " + d.rows.length +
+        " of " + fmt(d.row_count) + " rows."
+      )
+    );
+  }
+
+  card.append(
+    el("details", {},
+      el("summary", {}, "How was this calculated?"),
+      el("pre", {}, JSON.stringify(d.plan, null, 2))
+    )
+  );
+
   show(card);
 }
+
 
 $("ask").addEventListener("click", ask);
 $("question").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
