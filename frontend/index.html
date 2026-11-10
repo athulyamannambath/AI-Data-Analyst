@@ -62,6 +62,314 @@ pre { margin: 8px 0 0; padding: 12px; background: var(--ground); border-radius: 
 .spin { width: 20px; height: 20px; border: 3px solid var(--rule); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; flex: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } }
+
+/* =====================================
+   AI DATA ANALYST - DASHBOARD REDESIGN
+   Frontend styling improvements
+===================================== */
+
+/* Main page */
+.page {
+  max-width: 1280px;
+  margin: auto;
+  padding: 36px 28px 60px;
+}
+
+/* Dashboard header */
+header {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  padding: 30px 34px;
+  box-shadow: 0 5px 20px rgba(30, 50, 80, 0.05);
+}
+
+header h1 {
+  font-family: system-ui, sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 750;
+  letter-spacing: -1px;
+  color: var(--ink);
+}
+
+header p {
+  margin: 8px 0 0;
+  font-size: 1rem;
+}
+
+/* Main dashboard layout */
+.layout {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+  align-items: start;
+}
+
+/* Dataset sidebar */
+.side {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(30, 50, 80, 0.04);
+}
+
+/* Main content panel */
+main {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 4px 16px rgba(30, 50, 80, 0.04);
+}
+
+/* Labels */
+label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 9px;
+}
+
+/* Input and dataset selector */
+select,
+input {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select:hover,
+input:hover {
+  border-color: var(--accent);
+}
+
+select:focus,
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(31, 95, 191, 0.10);
+  outline: none;
+}
+
+/* Question input area */
+.row {
+  gap: 12px;
+  align-items: stretch;
+}
+
+.row input {
+  min-width: 0;
+  flex: 1;
+}
+
+/* Ask button */
+.ask {
+  border-radius: 10px;
+  padding: 12px 26px;
+  font-weight: 700;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.ask:hover:not(:disabled) {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+/* Suggested questions */
+.try {
+  margin-top: 18px;
+  line-height: 2;
+}
+
+.try button {
+  display: inline-block;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  padding: 5px 12px;
+  margin: 5px 6px 5px 0;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.try button:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+/* Dataset information */
+.stats {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  line-height: 1.7;
+}
+
+/* Section headings */
+h2 {
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  margin: 20px 0 12px;
+}
+
+/* Tables */
+.scroll {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+th {
+  background: var(--ground);
+  font-weight: 700;
+  padding: 11px 13px;
+}
+
+td {
+  padding: 10px 13px;
+}
+
+tbody tr:hover {
+  background: var(--ground);
+}
+
+/* Expandable sections */
+details {
+  padding: 10px 0;
+}
+
+summary {
+  font-weight: 600;
+  padding: 5px 0;
+}
+
+/* Analytical result card */
+.answer {
+  margin-top: 28px;
+  padding: 26px;
+  border: 1px solid var(--rule);
+  border-top: 4px solid var(--accent);
+  border-left: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(30, 50, 80, 0.05);
+}
+
+.answer .label {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.big {
+  font-family: system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin: 12px 0;
+}
+
+/* Chart area */
+.chartbox {
+  height: 360px;
+  margin: 22px 0;
+  padding: 12px;
+  background: var(--ground);
+  border-radius: 12px;
+}
+
+/* Table/chart toggle */
+.toggle {
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.toggle:hover {
+  background: var(--ground);
+}
+
+/* Explanation */
+.explain {
+  line-height: 1.8;
+  margin-top: 20px;
+}
+
+/* Empty result section */
+.empty {
+  background: var(--ground);
+  border: 1px dashed var(--rule);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: none;
+}
+
+/* Notifications */
+.notice {
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+/* Loading section */
+.loading {
+  background: var(--ground);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 860px) {
+  .page {
+    padding: 18px 14px 40px;
+  }
+
+  header {
+    padding: 22px;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .side {
+    padding: 20px;
+  }
+
+  main {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .ask {
+    width: 100%;
+  }
+
+  .answer {
+    padding: 18px;
+  }
+
+  .chartbox {
+    height: 280px;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+  }
+}
+
 </style>
 </head>
 <body>
