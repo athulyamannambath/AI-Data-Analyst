@@ -6,18 +6,37 @@
 <title>AI Data Analyst</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+
 :root {
-  --ground: #f3f5f8; --surface: #ffffff; --ink: #1b2a3a; --muted: #5b6b7b; --rule: #d9dfe7;
-  --accent: #1f5fbf; --on-accent: #ffffff; --warn-bg: #fff3d1; --warn: #6b4e00; --err-bg: #fde7e7; --err: #9b2222;
+  --ground: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #1b2a3a;
+  --muted: #5b6b7b;
+  --rule: #d9dfe7;
+  --accent: #1f5fbf;
+  --on-accent: #ffffff;
+  --warn-bg: #fff3d1;
+  --warn: #6b4e00;
+  --err-bg: #fde7e7;
+  --err: #9b2222;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ground: #12171e; --surface: #1a212b; --ink: #e7ecf2; --muted: #9aa8b8; --rule: #2b3542;
-    --accent: #7fa6ee; --on-accent: #0f1620; --warn-bg: #3a3017; --warn: #f1d27d; --err-bg: #3c2020; --err: #ffa3a3;
-    color-scheme: dark;
-  }
+
+:root[data-theme="dark"] {
+  --ground: #12171e;
+  --surface: #1a212b;
+  --ink: #e7ecf2;
+  --muted: #9aa8b8;
+  --rule: #2b3542;
+  --accent: #7fa6ee;
+  --on-accent: #0f1620;
+  --warn-bg: #3a3017;
+  --warn: #f1d27d;
+  --err-bg: #3c2020;
+  --err: #ffa3a3;
+  color-scheme: dark;
 }
+
 * { box-sizing: border-box; }
 html { background: var(--ground); }
 body { margin: 0; color: var(--ink); background: var(--ground); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -415,12 +434,43 @@ summary {
   }
 }
 
+.theme-toggle {
+  padding: 9px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--ground);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 </style>
 </head>
 <body>
 <div class="page">
   <header>
     <h1>AI Data Analyst</h1>
+
+    <button
+      id="themeToggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Switch to dark mode"
+    >
+      🌙 Dark mode
+    </button>
+
     <p class="muted">Ask a question about a dataset in plain English and get a number, a table or a chart.</p>
   </header>
 
@@ -751,6 +801,34 @@ $("ask").addEventListener("click", ask);
 $("question").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
 $("dataset").addEventListener("change", onDatasetChange);
 loadDatasets();
+
+const themeToggle = document.getElementById("themeToggle");
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+
+  if (theme === "dark") {
+    themeToggle.textContent = "☀️ Light mode";
+    themeToggle.setAttribute("aria-label", "Switch to light mode");
+  } else {
+    themeToggle.textContent = "🌙 Dark mode";
+    themeToggle.setAttribute("aria-label", "Switch to dark mode");
+  }
+}
+
+// Load the saved theme, or use light mode by default.
+const savedTheme = localStorage.getItem("ai-analyst-theme") || "light";
+applyTheme(savedTheme);
+
+// Switch themes when the button is clicked.
+themeToggle.addEventListener("click", () => {
+  const currentTheme = document.documentElement.getAttribute("data-theme");
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+  applyTheme(newTheme);
+  localStorage.setItem("ai-analyst-theme", newTheme);
+});
+
 </script>
 </body>
 </html>
