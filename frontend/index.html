@@ -369,6 +369,15 @@ summary {
 .toggle:hover {
   background: var(--ground);
 }
+/* Responsive result action buttons */
+@media (max-width: 520px) {
+  .toggle {
+    margin-right: 6px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+  }
+}
 
 /* Explanation */
 .explain {
@@ -483,7 +492,13 @@ summary {
   font: inherit;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 700px) {
+  .insight-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
   .insight-grid {
     grid-template-columns: 1fr;
   }
