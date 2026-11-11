@@ -586,9 +586,29 @@ const REQUEST_TIMEOUT_MS = 200000;
 const SLOW_AFTER_SECONDS = 15;
 
 const EXAMPLES = {
-  superstore: ["Total sales by region as a bar chart", "Show the monthly sales trend", "Top 5 sub-categories by total sales"],
-  hr_attrition: ["How many employees left the company?", "What is the average salary by department?", "Average age by job role as a bar chart"],
-  students: ["What is the average math score by gender?", "How many students scored above 90 in math?", "Average reading score by test preparation course"],
+  superstore: [
+    "What are the total sales and profit?",
+    "Show total sales by region as a bar chart",
+    "Which are the top 5 products by sales?",
+    "Show the monthly sales trend",
+    "Which category has the highest profit?"
+  ],
+
+  hr_attrition: [
+    "How many employees left the company?",
+    "What is the overall employee attrition rate?",
+    "What is the average salary by department?",
+    "Show employee attrition by job role",
+    "What is the average age of employees?"
+  ],
+
+  students: [
+    "What is the average math score by gender?",
+    "How many students scored above 90 in math?",
+    "What is the average reading score?",
+    "Compare math scores by test preparation course",
+    "Which gender has the highest average writing score?"
+  ]
 };
 
 const $ = (id) => document.getElementById(id);
