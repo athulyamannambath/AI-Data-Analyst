@@ -947,6 +947,17 @@ card.append(downloadButton);
         type: "button",
         class: "toggle"
       }, "Show as table");
+      const downloadChartButton = el("button", {
+  type: "button",
+  class: "toggle"
+}, "Download Chart PNG");
+
+downloadChartButton.addEventListener("click", () => {
+  const link = document.createElement("a");
+  link.href = canvas.toDataURL("image/png");
+  link.download = "query-chart.png";
+  link.click();
+});
 
       table.hidden = true;
 
@@ -957,7 +968,7 @@ card.append(downloadButton);
         toggle.textContent = showTable ? "Show as chart" : "Show as table";
       });
 
-      card.append(chartBox, table, toggle);
+      card.append(chartBox, table, toggle, downloadChartButton);
       requestAnimationFrame(() => drawChart(canvas, d));
     } else {
       card.append(table);
