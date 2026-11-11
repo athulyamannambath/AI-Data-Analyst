@@ -532,8 +532,22 @@ summary {
   <div class="layout">
     <aside class="side">
       <label for="dataset">Dataset</label>
-      <select id="dataset" aria-describedby="preview"></select>
-      <div id="preview" aria-live="polite"></div>
+<select id="dataset" aria-describedby="preview"></select>
+
+<div class="upload-section">
+  <label for="csv-upload">Or upload your own CSV file</label>
+  <input
+    type="file"
+    id="csv-upload"
+    accept=".csv,text/csv"
+  />
+  <p id="upload-status" aria-live="polite">
+    Select a CSV file from your computer.
+  </p>
+  <div id="upload-preview" aria-live="polite"></div>
+</div>
+
+<div id="preview" aria-live="polite"></div>
     </aside>
 
     <main>
@@ -855,6 +869,33 @@ plugins: {
   });
 }
 
+function downloadCSV(columns, rows) {
+  const escapeCSV = (value) => {
+    const text = String(value ?? "");
+    return '"' + text.replace(/"/g, '""') + '"';
+  };
+
+  const csv = [
+    columns.map(escapeCSV).join(","),
+    ...rows.map((row) => row.map(escapeCSV).join(","))
+  ].join("\r\n");
+
+  const blob = new Blob(["\uFEFF" + csv], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "query-results.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+}
+
 
 function render(d) {
   if (d.status === "clarification") {
@@ -885,7 +926,16 @@ function render(d) {
     );
   } else {
     const table = tableEl(d.columns, d.rows);
+    const downloadButton = el("button", {
+  type: "button",
+  class: "toggle"
+}, "Download CSV");
 
+downloadButton.addEventListener("click", () => {
+  downloadCSV(d.columns, d.rows);
+});
+
+card.append(downloadButton);
     if (d.result_type === "chart" && window.Chart) {
       const canvas = el("canvas", {
         role: "img",
@@ -940,6 +990,128 @@ function render(d) {
 
 $("ask").addEventListener("click", ask);
 $("question").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+
+function parseCSVText(text) {
+  const rows = [];
+  let row = [];
+  let value = "";
+  let insideQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (char === '"' && insideQuotes && next === '"') {
+      value += '"';
+      i++;
+    } else if (char === '"') {
+      insideQuotes = !insideQuotes;
+    } else if (char === "," && !insideQuotes) {
+      row.push(value);
+      value = "";
+    } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+      if (char === "\r" && next === "\n") i++;
+
+      row.push(value);
+      if (row.some(cell => cell.trim() !== "")) {
+        rows.push(row);
+      }
+
+      row = [];
+      value = "";
+    } else {
+      value += char;
+    }
+  }
+
+  row.push(value);
+  if (row.some(cell => cell.trim() !== "")) {
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+$("csv-upload").addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  const status = $("upload-status");
+  const preview = $("upload-preview");
+
+  preview.replaceChildren();
+
+  if (!file) return;
+
+  if (!file.name.toLowerCase().endsWith(".csv")) {
+    status.textContent = "Please select a CSV file.";
+    event.target.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    try {
+      const parsed = parseCSVText(reader.result);
+
+      if (parsed.length < 2) {
+        status.textContent = "The CSV file is empty or has no data rows.";
+        return;
+      }
+
+      const columns = parsed[0];
+      const dataRows = parsed.slice(1);
+
+      window.uploadedCSV = {
+        columns,
+        rows: dataRows
+      };
+
+      status.textContent =
+        `Loaded ${file.name} — ${dataRows.length} data rows and ${columns.length} columns.`;
+
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      columns.forEach(column => {
+        const th = document.createElement("th");
+        th.textContent = column;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      dataRows.slice(0, 5).forEach(dataRow => {
+        const tr = document.createElement("tr");
+
+        columns.forEach((_, index) => {
+          const td = document.createElement("td");
+          td.textContent = dataRow[index] ?? "";
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      preview.appendChild(table);
+
+    } catch (error) {
+      status.textContent = "Unable to read this CSV file.";
+      console.error(error);
+    }
+  };
+
+  reader.onerror = () => {
+    status.textContent = "Error reading the selected file.";
+  };
+
+  reader.readAsText(file);
+});
+
 $("dataset").addEventListener("change", onDatasetChange);
 loadDatasets();
 
